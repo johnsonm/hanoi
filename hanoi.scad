@@ -1,11 +1,12 @@
 // Print a set of disks for towers of hanoi
 
-e=0.01;
 // Heights 3mm and larger will work
 disk_height=5;
 //disk_height=6.35; // 1/4 inch
-post_radius=3; // 0.5 to 1 larger than the actual radius of your post
+post_radius=2.5;
+hole_radius=post_radius+0.5;
 
+e=0.01; // use to avoid coincident planes
 
 module disk(diameter, height) {
     $fn=120;
@@ -16,12 +17,14 @@ module disk(diameter, height) {
                 translate([diameter/2-height/2, height/2, 0])
                 circle(d=height);
         }
-        translate([0, 0, -e]) cylinder(r=post_radius, h=height+2*e);
+        translate([0, 0, -e]) cylinder(r=hole_radius, h=height+2*e);
     }
 }
 
-module set() {
-    // Set of six disks, with an attempt to use a small bounding box
+module disk_set() {
+    // Set of six disks, with an attempt to use a small and
+    // relatively square bounding box for printers with
+    // limited space
     // Initial diameter is 5 times the height of the disk;
     // subsequent disk *radii* grow by the disk height.
     h=disk_height;
@@ -39,7 +42,23 @@ module set() {
         x=p[0];
         y=p[1];
         d=p[2];
-        translate([x, y]) disk(d, disk_height);
+        translate([x, y]) disk(d, h);
     }
 }
-set();
+module base(radius_multiple) {
+    $fn=30;
+    h=disk_height;
+    d=h*radius_multiple;
+    y=-(d*0.5+h/2);
+    hull() {
+        translate([d*0.5, y]) disk(d, h);
+        translate([d*2.5, y]) disk(d, h);
+    }
+    translate([d*0.5, y]) cylinder(d=post_radius, h=8*h);
+    translate([d*1.5, y]) cylinder(d=post_radius, h=8*h);
+    translate([d*2.5, y]) cylinder(d=post_radius, h=8*h);
+}
+disk_set();
+// If you print the base, you may have to adjust the size to fit,
+// which might mean printing a smaller set of disks.
+base(17);
