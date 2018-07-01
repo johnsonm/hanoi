@@ -10,7 +10,12 @@ post_radius=3; // 0.5 to 1 larger than the actual radius of your post
 module disk(diameter, height) {
     $fn=120;
     difference() {
-        cylinder(d=diameter, h=height);
+        //cylinder(d=diameter, h=height);
+        hull() {
+            rotate_extrude(convexity = 10)
+                translate([diameter/2-height/2, height/2, 0])
+                circle(d=height);
+        }
         translate([0, 0, -e]) cylinder(r=post_radius, h=height+2*e);
     }
 }
