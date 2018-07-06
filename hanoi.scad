@@ -32,36 +32,37 @@ module disk_set() {
     // you may have to modify the position of the smallest disk
     s=h/2;
     disks = [
-        [h*7+h*9, h*9+h*5/2-s, h*5],
-        [h*7/2, h*7/2, h*7],
-        [h*7+s+h*9/2, h*9/2, h*9],
-        [h*7+s+h*9+s+h*11/2, h*11/2, h*11],
-        [h*7+s+h*9+s+h*11/2, h*11+s+h*13/2, h*13],
-        [h*15/2, h*9+s+h*15/2, h*15]
+        [h*15/2, h*15/2, h*15, 0],
+        [h*13/2, h*15+s+h*13/2, h*13, 0],
+        [h*11/2, h*15+s+h*13+s+h*11/2, h*11, 0],
+        [h*15/2, h*15/2, h*5, 1],
+        [h*13/2, h*15+s+h*13/2, h*7, 1],
+        [h*11/2, h*15+s+h*13+s+h*11/2, h*9, 1],
     ];
     for (p=disks) {
         x=p[0];
         y=p[1];
         d=p[2];
-        translate([x, y]) disk(d, h);
+        o=p[3] * (sqrt((pow(x+d/2, 2))/2) + s/sqrt(2));
+        translate([x+o, y+o]) disk(d, h);
     }
 }
 module base(radius_multiple) {
     $fn=30;
     h=disk_height;
     d=h*radius_multiple;
-    y=-(d*0.5+h/2);
+    x=-(d*0.5+h/2);
     hull() {
-        translate([d*0.5, y]) disk(d, h);
-        translate([d*2.5, y]) disk(d, h);
+        translate([x, d*0.5]) disk(d, h);
+        translate([x, d*2.5]) disk(d, h);
     }
-    translate([d*0.5, y]) cylinder(r=post_radius, h=8*h);
-    translate([d*1.5, y]) cylinder(r=post_radius, h=8*h);
-    translate([d*2.5, y]) cylinder(r=post_radius, h=8*h);
+    translate([x, d*0.5]) cylinder(r=post_radius, h=8*h);
+    translate([x, d*1.5]) cylinder(r=post_radius, h=8*h);
+    translate([x, d*2.5]) cylinder(r=post_radius, h=8*h);
     for (i=[1:6]) {
         z=i*disk_height;
         r=h*(3+2*(7-i));
-        translate([d*0.5, y, z]) %disk(r, h);
+        translate([x, d*0.5, z]) %disk(r, h);
     }
 
 }
