@@ -1,12 +1,25 @@
+// Copyright 2018 Michael K Johnson
+// Use allowed under Attribution 4.0 International (CC BY 4.0) license terms
+// https://creativecommons.org/licenses/by/4.0/legalcode
 // Print a set of disks for towers of hanoi
 
 // Heights 3mm and larger will work
 disk_height=5;
+base_height=disk_height; // thicker if necessary for screw for post
 //disk_height=6.35; // 1/4 inch
-post_radius=2.5;
+post_radius=4.75; // 4.75 is 3/16" for 3/8" aluminum rod
 hole_radius=post_radius+0.5;
 
+// flat-head screws, assume M3 flat-head screw
+// http://www.roymech.co.uk/Useful_Tables/Screws/cap_screws.htm
+// Set dimensions so screws are countersunk below surface
+screw_head_d=6.5; // outer diameter (>= A_max)
+screw_d=3;
+post_offset=0; // depth of rod pocket into base
+
 e=0.01; // use to avoid coincident planes
+
+
 
 module disk(diameter, height) {
     $fn=120;
@@ -21,14 +34,10 @@ module disk(diameter, height) {
     }
 }
 
-module disk_set() {
-    // Set of six disks, with an attempt to use a small and
-    // relatively square bounding box for printers with
-    // limited space
+module disk_set(h=disk_height) {
     // Initial diameter is 5 times the height of the disk;
     // subsequent disk *radii* grow by the disk height.
-    h=disk_height;
-    // enough separation to print nicely; if you shrink this,
+    // Enough separation to print nicely; if you shrink this,
     // you may have to modify the position of the smallest disk
     s=h/2;
     disks = [
@@ -47,18 +56,42 @@ module disk_set() {
         translate([x+o, y+o]) disk(d, h);
     }
 }
-module base(radius_multiple) {
+module base(radius_multiple, print_posts=false) {
     $fn=30;
-    h=disk_height;
+    h=base_height;
     d=h*radius_multiple;
     x=-(d*0.5+h/2);
-    hull() {
-        translate([x, d*0.5]) disk(d, h);
-        translate([x, d*2.5]) disk(d, h);
+    post_height=8*h+post_offset;
+    difference() {
+        hull() {
+            for (w=[d*0.5, d*2.5]) {
+                translate([x, w]) disk(d, h);
+            }
+        }
+        if (!print_posts) {
+        union() {
+                for (d=[d*0.5, d*1.5, d*2.5]) {
+                    translate([x, d, -e]) {
+                        // hole for post
+                        translate([0, 0, base_height-post_offset])
+                            cylinder(r=post_radius, h=h+2*e);
+                        // hole for screw
+                        cylinder(d=screw_d, h=base_height+e);
+                        // ~90⁰ included angle in screw head
+                        cylinder(d1=screw_head_d, d2=0, h=screw_head_d/sqrt(2));
+                    }
+                }
+            }
+        }
     }
-    translate([x, d*0.5]) cylinder(r=post_radius, h=8*h);
-    translate([x, d*1.5]) cylinder(r=post_radius, h=8*h);
-    translate([x, d*2.5]) cylinder(r=post_radius, h=8*h);
+    for (d=[d*0.5, d*1.5, d*2.5]) {
+        translate([x, d, base_height-post_offset]) if (print_posts) {
+            cylinder(r=post_radius, h=post_height);
+        } else {
+            %cylinder(r=post_radius, h=post_height+post_offset);
+        }
+    }
+    echo("Post height: ", post_height, "mm");
     for (i=[1:6]) {
         z=i*disk_height;
         r=h*(3+2*(7-i));
@@ -69,4 +102,4 @@ module base(radius_multiple) {
 disk_set();
 // If you print the base, you may have to adjust the size to fit,
 // which might mean printing a smaller set of disks.
-base(17);
+base(17, false);
