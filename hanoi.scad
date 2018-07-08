@@ -3,23 +3,25 @@
 // https://creativecommons.org/licenses/by/4.0/legalcode
 // Print a set of disks for towers of hanoi
 
-// Heights 3mm and larger will work
+// Heights 3mm and larger will work; 6.35mm is 1/4"
 disk_height=5;
-base_height=disk_height; // thicker if necessary for screw for post
-//disk_height=6.35; // 1/4 inch
-post_radius=4.75; // 4.75 is 3/16" for 3/8" aluminum rod
+// The height of the base can be thicker if necessary for screw for post
+base_height=5;
+// 4.75 is 3/16" for 3/8" rod; at least 3mm recommended
+post_radius=4.75; // [3:10]
 hole_radius=post_radius+0.5;
 
 // flat-head screws, assume M3 flat-head screw
 // http://www.roymech.co.uk/Useful_Tables/Screws/cap_screws.htm
 // Set dimensions so screws are countersunk below surface
-screw_head_d=6.5; // outer diameter (>= A_max)
+// Screw head outer diameter (>= A_max)
+screw_head_d=6.5;
+// Screw outside thread diameter (M3 == 3mm, #6 == 3.5mm)
 screw_d=3;
-post_offset=0; // depth of rod pocket into base
+// depth of rod pocket cut into base (increase base_height)
+post_offset=0;
 
 e=0.01; // use to avoid coincident planes
-
-
 
 module disk(diameter, height) {
     $fn=120;
