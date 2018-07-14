@@ -42,6 +42,11 @@ on the base (and the posts if not printed) as "background",
 which can help you make sure that the parameters you have
 chosen will work well.
 
+You can print an extra set of discs in a second color for
+[two color towers of Hanoi](https://www.cut-the-knot.org/recurrence/BiColorHanoi.shtml).
+If you do that, increase the size of the posts by at least two
+rings.
+
 Copyright 2018 Michael K Johnson
 Use allowed under Attribution 4.0 International (CC BY 4.0) license terms
 https://creativecommons.org/licenses/by/4.0/legalcode

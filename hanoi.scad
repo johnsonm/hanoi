@@ -10,6 +10,8 @@ base_height=5;
 // 4.75 is 3/16" for 3/8" rod; at least 3mm recommended
 post_radius=4.75; // [3:10]
 hole_radius=post_radius+0.5;
+// Add space for at least two additional rings for two-color Hanoi
+rings_per_post=6;
 
 // flat-head screws, assume M3 flat-head screw
 // http://www.roymech.co.uk/Useful_Tables/Screws/cap_screws.htm
@@ -63,7 +65,7 @@ module base(radius_multiple, print_posts=false) {
     h=base_height;
     d=h*radius_multiple;
     x=-(d*0.5+h/2);
-    post_height=8*h+post_offset;
+    post_height=(rings_per_post+2)*h+post_offset;
     difference() {
         hull() {
             for (w=[d*0.5, d*2.5]) {
@@ -104,4 +106,4 @@ module base(radius_multiple, print_posts=false) {
 disk_set();
 // If you print the base, you may have to adjust the size to fit,
 // which might mean printing a smaller set of disks.
-base(17, false);
+base(17, true);
