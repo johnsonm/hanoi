@@ -9,7 +9,7 @@ disk_height=5;
 base_height=5;
 // 4.75 is 3/16" for 3/8" rod; at least 3mm recommended
 post_radius=4.75; // [3:10]
-hole_radius=post_radius+0.5;
+hole_radius=post_radius+0.75;
 // Add space for at least two additional rings for two-color Hanoi
 rings_per_post=6;
 
