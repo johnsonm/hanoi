@@ -7,7 +7,7 @@
 count=8; // [3:20]
 // Number of sides for each pyramid
 sides=4; // [3:10]
-// Width of circumsribing cylinder around base of smallest pyramid
+// Width of circumscribing cylinder around base of smallest pyramid
 base=20;
 // Thickness of pyramid shells
 thickness=2;
