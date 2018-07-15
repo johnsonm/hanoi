@@ -26,18 +26,20 @@ post_offset=0;
 e=0.01; // use to avoid coincident planes
 
 module disk(diameter, height) {
-    $fn=120;
     difference() {
-        //cylinder(d=diameter, h=height);
         hull() {
-            rotate_extrude(convexity = 10)
+            rotate_extrude(convexity=10, $fn=diameter)
                 translate([diameter/2-height/2, height/2, 0])
-                circle(d=height);
+                circle(d=height, $fa=5*base_height);
         }
-        translate([0, 0, -e]) cylinder(r=hole_radius, h=height+2*e);
+        translate([0, 0, -e]) cylinder(r=hole_radius, h=height+2*e, $fn=post_radius*4);
     }
 }
-
+module post(r, h) {
+    $fn=30;
+    cylinder(r=r, h=h-r);
+    translate([0, 0, h-r]) sphere(r=r);
+}
 module disk_set(h=disk_height) {
     // Initial diameter is 5 times the height of the disk;
     // subsequent disk *radii* grow by the disk height.
@@ -90,9 +92,9 @@ module base(radius_multiple, print_posts=false) {
     }
     for (d=[d*0.5, d*1.5, d*2.5]) {
         translate([x, d, base_height-post_offset]) if (print_posts) {
-            cylinder(r=post_radius, h=post_height);
+            post(r=post_radius, h=post_height);
         } else {
-            %cylinder(r=post_radius, h=post_height+post_offset);
+            %post(r=post_radius, h=post_height+post_offset);
         }
     }
     echo("Post height: ", post_height, "mm");
