@@ -6,13 +6,6 @@ Printable six-disk [towers of Hanoi](https://en.wikipedia.org/wiki/Tower_of_Hano
 
 ### Modifications
 
-As designed, this set barely fits on the 270mm-long bed of my
-printer, so if you do not have 270mm in at least one axis you may
-have to modify this.  You can try printing the disks separately
-and printing the base across the diagonal.  The easiest way is
-probably to separate the pieces in the slicer and re-arrange them
-there until they fit your printer.
-
 While this set is designed to work for disk thickness down to
 3mm, in practice even the 5mm default thickness is about as
 thin as is comfortable to manipulate.  Because this set is
@@ -20,9 +13,8 @@ designed to preserve aspect ratio, you will need a large
 printer to print this set above the default 5mm disk thickness,
 or you will need to explicitly change the aspect ratio.
 
-If you print posts, the `post_radius` should not be less than
-5mm, at least with PLA.  PETG might be sufficiently strong with
-thinner posts.
+If you print posts (the default), the `post_radius` should not be
+less than 5mm; 6mm is recommended.
 
 If you do not print posts, you'll have to drill holes in the
 bottoms of whatever you use for the posts.  You can set a non-zero
@@ -38,14 +30,14 @@ You may want to chamfer or round the top of the posts to make it
 easier to slip the disks on the posts.
 
 Note that in OpenSCAD, F5 preview will show a stack of disks
-on the base (and the posts if not printed) as "background",
+on the base (and the posts, if not printed) as "background",
 which can help you make sure that the parameters you have
 chosen will work well.
 
 You can print an extra set of discs in a second color for
 [two color towers of Hanoi](https://www.cut-the-knot.org/recurrence/BiColorHanoi.shtml).
-If you do that, increase the size of the posts by at least two
-rings.
+If you do that, add at least two ring thicknesses to the size of
+the posts.
 
 ## panoi.scad
 

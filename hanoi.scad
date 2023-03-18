@@ -7,11 +7,12 @@
 disk_height=5;
 // The height of the base can be thicker if necessary for screw for post
 base_height=5;
-// 4.75 is 3/16" for 3/8" rod; at least 3mm recommended
-post_radius=4.75; // [3:10]
+// 4.75 is 3/16" radius for 3/8" diameter rod; at least 3mm radius recommended
+// 6 recommended for printed rods
+post_radius=6; // [3:10]
 hole_radius=post_radius+0.75;
 // Add space for at least two additional rings for two-color Hanoi
-rings_per_post=6;
+rings_per_post=7;
 
 // flat-head screws, assume M3 flat-head screw
 // http://www.roymech.co.uk/Useful_Tables/Screws/cap_screws.htm
@@ -30,7 +31,7 @@ module disk(diameter, height) {
         hull() {
             rotate_extrude(convexity=10, $fn=diameter)
                 translate([diameter/2-height/2, height/2, 0])
-                circle(d=height, $fa=5*base_height);
+                circle(d=height, $fn=6);
         }
         translate([0, 0, -e]) cylinder(r=hole_radius, h=height+2*e, $fn=post_radius*4);
     }
@@ -62,7 +63,7 @@ module disk_set(h=disk_height) {
         translate([x+o, y+o]) disk(d, h);
     }
 }
-module base(radius_multiple, print_posts=false) {
+module base(radius_multiple, print_posts=true) {
     $fn=30;
     h=base_height;
     d=h*radius_multiple;
