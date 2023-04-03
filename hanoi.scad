@@ -18,9 +18,13 @@ rings_per_post=7;
 // http://www.roymech.co.uk/Useful_Tables/Screws/cap_screws.htm
 // Set dimensions so screws are countersunk below surface
 // Screw head outer diameter (>= A_max)
-screw_head_d=6.5;
+screw_head_d=7;
+// max length of screw in printed post
+screw_length=20;
 // Screw outside thread diameter (M3 == 3mm, #6 == 3.5mm)
-screw_d=3;
+screw_d=3.3;
+// Diameter to tap in printed posts
+tap_d=3;
 // depth of rod pocket cut into base (increase base_height)
 post_offset=0;
 
@@ -29,17 +33,17 @@ e=0.01; // use to avoid coincident planes
 module disk(diameter, height) {
     difference() {
         hull() {
-            rotate_extrude(convexity=10, $fn=diameter)
+            rotate_extrude(convexity=10, $fn=diameter*2)
                 translate([diameter/2-height/2, height/2, 0])
                 circle(d=height, $fn=6);
         }
-        translate([0, 0, -e]) cylinder(r=hole_radius, h=height+2*e, $fn=post_radius*4);
+        translate([0, 0, -e]) cylinder(r=hole_radius, h=height+2*e, $fn=72);
     }
 }
 module post(r, h) {
     $fn=30;
-    cylinder(r=r, h=h-r);
-    translate([0, 0, h-r]) sphere(r=r);
+    cylinder(r=r, h=h-r, $fn=72);
+    translate([0, 0, h-r]) sphere(r=r, $fn=72);
 }
 module disk_set(h=disk_height) {
     // Initial diameter is 5 times the height of the disk;
@@ -70,32 +74,31 @@ module base(radius_multiple, print_posts=true) {
     x=-(d*0.5+h/2);
     post_height=(rings_per_post+2)*h+post_offset;
     difference() {
-        hull() {
-            for (w=[d*0.5, d*2.5]) {
-                translate([x, w]) disk(d, h);
-            }
-        }
-        if (!print_posts) {
         union() {
-                for (d=[d*0.5, d*1.5, d*2.5]) {
-                    translate([x, d, -e]) {
-                        // hole for post
-                        translate([0, 0, base_height-post_offset])
-                            cylinder(r=post_radius, h=h+2*e);
-                        // hole for screw
-                        cylinder(d=screw_d, h=base_height+e);
-                        // ~90⁰ included angle in screw head
-                        cylinder(d1=screw_head_d, d2=0, h=screw_head_d/sqrt(2));
-                    }
+            hull() {
+                for (w=[d*0.5, d*2.5]) {
+                    translate([x, w]) disk(d, h);
+                }
+            }
+            for (d=[d*0.5, d*1.5, d*2.5]) {
+                translate([x, d, base_height-post_offset]) if (print_posts) {
+                    post(r=post_radius, h=post_height);
+                } else {
+                    %post(r=post_radius, h=post_height+post_offset);
                 }
             }
         }
-    }
-    for (d=[d*0.5, d*1.5, d*2.5]) {
-        translate([x, d, base_height-post_offset]) if (print_posts) {
-            post(r=post_radius, h=post_height);
-        } else {
-            %post(r=post_radius, h=post_height+post_offset);
+        union() {
+            for (d=[d*0.5, d*1.5, d*2.5]) {
+                translate([x, d, -e]) {
+                    // clearance hole for screw
+                    cylinder(d=screw_d, h=base_height+e);
+                    // tap hole for screw
+                    cylinder(d=tap_d, h=screw_length);
+                    // ~90⁰ included angle in screw head
+                    cylinder(d1=screw_head_d, d2=0, h=screw_head_d/sqrt(2));
+                }
+            }
         }
     }
     echo("Post height: ", post_height, "mm");
@@ -104,9 +107,7 @@ module base(radius_multiple, print_posts=true) {
         r=h*(3+2*(7-i));
         translate([x, d*0.5, z]) %disk(r, h);
     }
-
 }
+
 disk_set();
-// If you print the base, you may have to adjust the size to fit,
-// which might mean printing a smaller set of disks.
-base(17, true);
+base(17, print_posts=true);
